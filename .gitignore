@@ -29,6 +29,9 @@ modules/*/tools/
 !modules/example-statistics/formulas/
 !modules/example-statistics/tools/
 
+# AI response cache
+.cache/
+
 # OS
 .DS_Store
 Thumbs.db
