@@ -20,12 +20,11 @@ Drop in a lecture PDF and get back:
 pip install -r requirements.txt
 ```
 
-### 2. Set up your API key
+### 2. Ensure Claude Code is installed and authenticated
 ```bash
-cp .env.example .env
-# Edit .env and add your Anthropic API key
-# Get one at: https://console.anthropic.com/
+claude --version
 ```
+If not installed, see [Claude Code setup](https://docs.anthropic.com/en/docs/claude-code).
 
 ### 3. Add your lecture PDF
 ```
@@ -73,10 +72,9 @@ modules/example-statistics/tools/calculator.html
 ClaudeStudentPrep/
 ├── process_lecture.py      # Main CLI script
 ├── requirements.txt
-├── .env.example
 ├── src/
 │   ├── pdf_extractor.py    # PDF text extraction (PyMuPDF)
-│   ├── ai_processor.py     # Claude API call
+│   ├── ai_processor.py     # claude CLI call (subprocess)
 │   ├── response_parser.py  # Parse AI response sections
 │   └── output_writer.py    # Write files to module folder
 ├── prompts/
@@ -104,7 +102,7 @@ modules/statistics/
 ## Requirements
 
 - Python 3.10+
-- An [Anthropic API key](https://console.anthropic.com/)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 - A text-based PDF (scanned image-only PDFs require OCR pre-processing)
 
 ---
@@ -114,12 +112,12 @@ modules/statistics/
 ```
 PDF file
   └─→ [1/4] pdf_extractor.py  — extracts text with PyMuPDF
-  └─→ [2/4] ai_processor.py   — sends to Claude (claude-sonnet-4-6)
+  └─→ [2/4] ai_processor.py   — sends to local claude CLI (subprocess)
   └─→ [3/4] response_parser.py — splits response into 7 labeled sections
   └─→ [4/4] output_writer.py  — saves each section to correct file
 ```
 
-One API call generates all seven study artifacts simultaneously.
+One `claude` invocation generates all seven study artifacts simultaneously.
 
 ---
 
@@ -128,7 +126,7 @@ One API call generates all seven study artifacts simultaneously.
 | Idea | How |
 |---|---|
 | Add a new output section | Add marker to `prompts/summarization.txt` and a new entry in `src/output_writer.py:SECTION_MAP` |
-| Change AI model | Edit `MODEL` in `src/ai_processor.py` |
+| Change AI model | Pass `--model` flag in the `claude` subprocess call in `src/ai_processor.py` |
 | Batch process a folder | Wrap `process_lecture.py` in a shell loop |
-| Re-run only one section | Use standalone prompts in `prompts/` with the Anthropic API directly |
+| Re-run only one section | Use standalone prompts in `prompts/` with `claude -p` directly |
 | Support scanned PDFs | Pre-process with `ocrmypdf` or Adobe Acrobat before running |
