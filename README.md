@@ -1,6 +1,6 @@
 # ClaudeStudentPrep
 
-An AI-powered study system that transforms lecture PDFs into complete exam preparation materials using Claude AI.
+An AI-powered study system that transforms lecture PDFs into complete exam preparation materials using the local Claude Code CLI.
 
 Drop in a lecture PDF and get back:
 - Structured lecture summary
@@ -30,11 +30,15 @@ If not installed, see [Claude Code setup](https://docs.anthropic.com/en/docs/cla
 ```
 modules/my-module/input/lecture.pdf
 ```
-(Create the folder, or let the tool create it automatically.)
+Drop the PDF into the module's `input/` folder (create the folder if needed).
 
 ### 4. Run the processor
 ```bash
-python process_lecture.py modules/my-module/input/lecture.pdf my-module
+# Module name first — PDF auto-discovered from modules/my-module/input/
+python process_lecture.py my-module
+
+# Or supply the PDF path explicitly
+python process_lecture.py my-module path/to/lecture.pdf
 ```
 
 ### 5. Find your study materials
