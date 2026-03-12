@@ -11,10 +11,7 @@ Examples:
 """
 
 import argparse
-import os
 import sys
-
-from dotenv import load_dotenv
 
 from src.pdf_extractor import extract_pdf
 from src.ai_processor import call_claude
@@ -47,18 +44,6 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    # Load .env (silently succeeds if file does not exist)
-    load_dotenv()
-
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        sys.exit(
-            "ERROR: ANTHROPIC_API_KEY is not set.\n"
-            "  1. Copy .env.example to .env\n"
-            "  2. Add your API key from https://console.anthropic.com/\n"
-            "  3. Re-run this command."
-        )
-
     print(f"\nClaudeStudentPrep — processing: {args.pdf_path}")
     print(f"Module: {args.module_name}\n")
 
@@ -70,10 +55,10 @@ def main() -> None:
         sys.exit(f"ERROR (PDF extraction): {exc}")
     print(f"      Extracted {len(pdf_text):,} characters from PDF.")
 
-    # Step 2 — Call Claude API
-    print("[2/4] Calling Claude API...")
+    # Step 2 — Call Claude (local CLI)
+    print("[2/4] Running Claude (local)...")
     try:
-        ai_response = call_claude(pdf_text, api_key)
+        ai_response = call_claude(pdf_text)
     except (FileNotFoundError, RuntimeError) as exc:
         sys.exit(f"ERROR (AI processing): {exc}")
     print(f"      Received {len(ai_response):,} character response.")

@@ -1,27 +1,23 @@
-"""Send lecture text to Claude and return the structured response."""
+"""Send lecture text to Claude (local claude CLI) and return the structured response."""
 
 import os
-
-import anthropic
+import subprocess
 
 PROMPT_FILE = os.path.join(os.path.dirname(__file__), "..", "prompts", "summarization.txt")
-MODEL = "claude-sonnet-4-6"
-MAX_TOKENS = 8192
 
 
-def call_claude(pdf_text: str, api_key: str) -> str:
-    """Send the extracted PDF text to Claude and return the full response.
+def call_claude(pdf_text: str) -> str:
+    """Send the extracted PDF text to the local claude CLI and return the full response.
 
     Args:
         pdf_text: Text extracted from the lecture PDF.
-        api_key:  Anthropic API key.
 
     Returns:
         Raw text response from Claude containing all labeled sections.
 
     Raises:
         FileNotFoundError: If the prompt template file is missing.
-        RuntimeError: On any Anthropic API error (wraps the original).
+        RuntimeError: If the claude CLI is not found or exits with an error.
     """
     prompt_path = os.path.normpath(PROMPT_FILE)
     if not os.path.exists(prompt_path):
@@ -35,27 +31,21 @@ def call_claude(pdf_text: str, api_key: str) -> str:
 
     full_prompt = prompt_template.replace("{PDF_TEXT}", pdf_text)
 
-    client = anthropic.Anthropic(api_key=api_key)
-
     try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=MAX_TOKENS,
-            messages=[{"role": "user", "content": full_prompt}],
+        result = subprocess.run(
+            ["claude", "-p", full_prompt],
+            capture_output=True,
+            text=True,
         )
-    except anthropic.AuthenticationError as exc:
+    except FileNotFoundError:
         raise RuntimeError(
-            "Invalid Anthropic API key. "
-            "Check that ANTHROPIC_API_KEY in your .env file is correct."
-        ) from exc
-    except anthropic.RateLimitError as exc:
-        raise RuntimeError(
-            "Anthropic API rate limit reached. "
-            "Wait a moment and try again."
-        ) from exc
-    except anthropic.APIStatusError as exc:
-        raise RuntimeError(
-            f"Anthropic API error (HTTP {exc.status_code}): {exc.message}"
-        ) from exc
+            "claude CLI not found. "
+            "Ensure Claude Code is installed and available on your PATH."
+        )
 
-    return response.content[0].text
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"claude CLI exited with code {result.returncode}:\n{result.stderr.strip()}"
+        )
+
+    return result.stdout
