@@ -1,0 +1,40 @@
+# Environment / secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# PDFs — students drop these locally; not committed
+modules/*/input/*.pdf
+
+# Generated output — recreated by running the tool; not committed
+modules/*/docs/
+modules/*/exams/
+modules/*/formulas/
+modules/*/tools/
+
+# Exception: keep the example-statistics module fully committed as a demo
+!modules/example-statistics/docs/
+!modules/example-statistics/exams/
+!modules/example-statistics/formulas/
+!modules/example-statistics/tools/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

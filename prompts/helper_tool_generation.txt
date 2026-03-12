@@ -1,0 +1,17 @@
+# Standalone Helper Tool Generation Prompt
+# Used in future multi-call mode or for regenerating tools independently.
+
+You are an expert developer and educator. Based on the formulas below, generate a self-contained
+interactive calculator as a single HTML file.
+
+Requirements:
+- Use only vanilla HTML, CSS, and JavaScript — zero external dependencies
+- Include a dropdown to select which formula to calculate
+- Show the relevant input fields when a formula is selected
+- A "Calculate" button that computes and displays the result
+- Clear field labels and example placeholder values
+- Works completely offline when saved as a .html file
+- Add inline comments explaining each calculation step
+
+FORMULAS:
+{FORMULAS_TEXT}

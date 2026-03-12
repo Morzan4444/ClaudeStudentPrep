@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistics Formula Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f7fa;
+      color: #333;
+    }
+    h1 { color: #2c3e50; font-size: 1.4rem; }
+    label { display: block; margin-top: 12px; font-weight: bold; font-size: 0.9rem; }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .formula-group { display: none; }
+    .formula-group.active { display: block; }
+    button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: #1a6a9e; }
+    #result {
+      margin-top: 16px;
+      padding: 12px;
+      background: #eaf4fb;
+      border-left: 4px solid #2980b9;
+      border-radius: 4px;
+      font-size: 1rem;
+      display: none;
+    }
+    .hint { font-size: 0.8rem; color: #666; margin-top: 2px; }
+    .formula-box {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 Statistics Formula Calculator</h1>
+<p style="font-size:0.85rem; color:#666;">Select a formula, enter values, and click Calculate.</p>
+
+<!-- Formula selector dropdown -->
+<label for="formulaSelect">Select Formula:</label>
+<select id="formulaSelect" onchange="showFormula()">
+  <option value="">-- Choose a formula --</option>
+  <option value="mean">Mean (Arithmetic Average)</option>
+  <option value="variance">Sample Variance (s²)</option>
+  <option value="stddev">Sample Standard Deviation (s)</option>
+  <option value="zscore">Z-Score</option>
+  <option value="se">Standard Error of the Mean</option>
+  <option value="ci95">95% Confidence Interval</option>
+</select>
+
+<!-- ──────────────────────────────────────────────
+     MEAN: x̄ = Σxᵢ / n
+────────────────────────────────────────────── -->
+<div id="mean" class="formula-group formula-box">
+  <strong>Formula: x̄ = Σxᵢ / n</strong>
+  <label for="mean_values">Enter values (comma-separated):</label>
+  <input type="text" id="mean_values" placeholder="e.g. 72, 85, 90, 68, 95" />
+  <p class="hint">Separate each number with a comma.</p>
+</div>
+
+<!-- ──────────────────────────────────────────────
+     SAMPLE VARIANCE: s² = Σ(xᵢ − x̄)² / (n−1)
+────────────────────────────────────────────── -->
+<div id="variance" class="formula-group formula-box">
+  <strong>Formula: s² = Σ(xᵢ − x̄)² / (n − 1)</strong>
+  <label for="var_values">Enter values (comma-separated):</label>
+  <input type="text" id="var_values" placeholder="e.g. 72, 85, 90, 68, 95" />
+  <p class="hint">Requires at least 2 values.</p>
+</div>
+
+<!-- ──────────────────────────────────────────────
+     SAMPLE STD DEV: s = √s²
+────────────────────────────────────────────── -->
+<div id="stddev" class="formula-group formula-box">
+  <strong>Formula: s = √[Σ(xᵢ − x̄)² / (n − 1)]</strong>
+  <label for="sd_values">Enter values (comma-separated):</label>
+  <input type="text" id="sd_values" placeholder="e.g. 72, 85, 90, 68, 95" />
+</div>
+
+<!-- ──────────────────────────────────────────────
+     Z-SCORE: z = (x − μ) / σ
+────────────────────────────────────────────── -->
+<div id="zscore" class="formula-group formula-box">
+  <strong>Formula: z = (x − μ) / σ</strong>
+  <label for="z_x">Value (x):</label>
+  <input type="number" id="z_x" placeholder="e.g. 85" />
+  <label for="z_mu">Population mean (μ):</label>
+  <input type="number" id="z_mu" placeholder="e.g. 78" />
+  <label for="z_sigma">Standard deviation (σ):</label>
+  <input type="number" id="z_sigma" placeholder="e.g. 10" step="any" />
+</div>
+
+<!-- ──────────────────────────────────────────────
+     STANDARD ERROR: SE = s / √n
+────────────────────────────────────────────── -->
+<div id="se" class="formula-group formula-box">
+  <strong>Formula: SE = s / √n</strong>
+  <label for="se_s">Sample standard deviation (s):</label>
+  <input type="number" id="se_s" placeholder="e.g. 9.18" step="any" />
+  <label for="se_n">Sample size (n):</label>
+  <input type="number" id="se_n" placeholder="e.g. 25" min="1" />
+</div>
+
+<!-- ──────────────────────────────────────────────
+     95% CI: x̄ ± 1.96 × (s / √n)
+────────────────────────────────────────────── -->
+<div id="ci95" class="formula-group formula-box">
+  <strong>Formula: CI = x̄ ± 1.96 × (s / √n)</strong>
+  <label for="ci_mean">Sample mean (x̄):</label>
+  <input type="number" id="ci_mean" placeholder="e.g. 82.25" step="any" />
+  <label for="ci_s">Sample standard deviation (s):</label>
+  <input type="number" id="ci_s" placeholder="e.g. 9.18" step="any" />
+  <label for="ci_n">Sample size (n):</label>
+  <input type="number" id="ci_n" placeholder="e.g. 30" min="1" />
+</div>
+
+<button onclick="calculate()">Calculate</button>
+
+<!-- Result display area -->
+<div id="result"></div>
+
+<script>
+  // Show the selected formula's input fields
+  function showFormula() {
+    const selected = document.getElementById('formulaSelect').value;
+    // Hide all formula groups
+    document.querySelectorAll('.formula-group').forEach(el => el.classList.remove('active'));
+    // Show the selected one
+    if (selected) {
+      document.getElementById(selected).classList.add('active');
+    }
+    // Clear any previous result
+    document.getElementById('result').style.display = 'none';
+  }
+
+  // Parse a comma-separated string into an array of numbers
+  function parseValues(str) {
+    return str.split(',')
+      .map(v => parseFloat(v.trim()))
+      .filter(v => !isNaN(v));
+  }
+
+  // Compute the arithmetic mean of an array
+  function mean(arr) {
+    return arr.reduce((sum, v) => sum + v, 0) / arr.length;
+  }
+
+  // Compute sample variance (divides by n-1)
+  function sampleVariance(arr) {
+    const m = mean(arr);
+    const sumSq = arr.reduce((sum, v) => sum + Math.pow(v - m, 2), 0);
+    return sumSq / (arr.length - 1); // Bessel's correction
+  }
+
+  // Main calculation dispatcher
+  function calculate() {
+    const formula = document.getElementById('formulaSelect').value;
+    const resultDiv = document.getElementById('result');
+    let output = '';
+
+    try {
+      if (formula === 'mean') {
+        const vals = parseValues(document.getElementById('mean_values').value);
+        if (vals.length === 0) throw new Error('Please enter at least one number.');
+        const m = mean(vals);
+        output = `Mean (x̄) = ${m.toFixed(4)}<br><small>Sum: ${vals.reduce((a,b)=>a+b,0).toFixed(4)} ÷ ${vals.length} values</small>`;
+
+      } else if (formula === 'variance') {
+        const vals = parseValues(document.getElementById('var_values').value);
+        if (vals.length < 2) throw new Error('Need at least 2 values for sample variance.');
+        const v = sampleVariance(vals);
+        output = `Sample Variance (s²) = ${v.toFixed(4)}<br><small>Mean used: ${mean(vals).toFixed(4)}, n = ${vals.length}</small>`;
+
+      } else if (formula === 'stddev') {
+        const vals = parseValues(document.getElementById('sd_values').value);
+        if (vals.length < 2) throw new Error('Need at least 2 values for standard deviation.');
+        const sd = Math.sqrt(sampleVariance(vals));
+        output = `Sample Std Dev (s) = ${sd.toFixed(4)}<br><small>s² = ${sampleVariance(vals).toFixed(4)}</small>`;
+
+      } else if (formula === 'zscore') {
+        // z = (x - mu) / sigma
+        const x     = parseFloat(document.getElementById('z_x').value);
+        const mu    = parseFloat(document.getElementById('z_mu').value);
+        const sigma = parseFloat(document.getElementById('z_sigma').value);
+        if (isNaN(x) || isNaN(mu) || isNaN(sigma)) throw new Error('Fill in all three fields.');
+        if (sigma === 0) throw new Error('Standard deviation cannot be zero.');
+        const z = (x - mu) / sigma;
+        output = `Z-Score = ${z.toFixed(4)}<br><small>(${x} − ${mu}) ÷ ${sigma}</small>`;
+
+      } else if (formula === 'se') {
+        // SE = s / sqrt(n)
+        const s = parseFloat(document.getElementById('se_s').value);
+        const n = parseInt(document.getElementById('se_n').value);
+        if (isNaN(s) || isNaN(n)) throw new Error('Fill in both fields.');
+        if (n < 1) throw new Error('Sample size must be at least 1.');
+        const se = s / Math.sqrt(n);
+        output = `Standard Error (SE) = ${se.toFixed(6)}<br><small>${s} ÷ √${n} = ${s} ÷ ${Math.sqrt(n).toFixed(4)}</small>`;
+
+      } else if (formula === 'ci95') {
+        // CI = mean ± 1.96 * (s / sqrt(n))
+        const xbar = parseFloat(document.getElementById('ci_mean').value);
+        const s    = parseFloat(document.getElementById('ci_s').value);
+        const n    = parseInt(document.getElementById('ci_n').value);
+        if (isNaN(xbar) || isNaN(s) || isNaN(n)) throw new Error('Fill in all three fields.');
+        if (n < 1) throw new Error('Sample size must be at least 1.');
+        const margin = 1.96 * (s / Math.sqrt(n));
+        const lower  = xbar - margin;
+        const upper  = xbar + margin;
+        output = `95% CI = [${lower.toFixed(4)}, ${upper.toFixed(4)}]<br>
+                  <small>Margin of error: ±${margin.toFixed(4)}<br>
+                  Formula: ${xbar} ± 1.96 × (${s} / √${n})</small>`;
+
+      } else {
+        throw new Error('Please select a formula first.');
+      }
+    } catch (err) {
+      output = `<span style="color:#c0392b;">⚠ ${err.message}</span>`;
+    }
+
+    resultDiv.innerHTML = output;
+    resultDiv.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
