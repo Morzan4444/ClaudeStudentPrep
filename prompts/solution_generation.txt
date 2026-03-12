@@ -1,0 +1,17 @@
+# Standalone Solution Generation Prompt
+# Used in future multi-call mode or for generating solutions for a given exam independently.
+
+You are an expert academic tutor. Provide complete solutions for the following exam.
+
+For each question:
+- MCQ (Q1–Q5): State the correct letter and a one-sentence explanation.
+- Short-answer (Q6–Q8): Write a model answer of 3–5 sentences.
+- Problem-solving (Q9–Q10): Show full step-by-step working with intermediate results.
+
+Reference each solution by question number: "Q1:", "Q2:", etc.
+
+EXAM:
+{EXAM_TEXT}
+
+LECTURE CONTENT (for reference):
+{PDF_TEXT}

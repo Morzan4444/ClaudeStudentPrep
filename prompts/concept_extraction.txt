@@ -1,0 +1,13 @@
+# Standalone Concept Extraction Prompt
+# Used in future multi-call mode or for re-running concept extraction independently.
+
+You are an expert academic tutor. Extract all key concepts and definitions from the lecture content below.
+
+For each concept use this format:
+**Concept Name**: Definition in 1–3 clear sentences. Include one intuitive real-world example.
+
+Aim for 10–20 concepts depending on lecture density.
+Cover every technical term, method, algorithm, or principle introduced.
+
+LECTURE CONTENT:
+{PDF_TEXT}
